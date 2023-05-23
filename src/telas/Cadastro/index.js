@@ -12,7 +12,7 @@ export default function Cadastro({ navigation }) {
   const [confirmaSenha, setConfirmaSenha] = useState('');
 
   useEffect(() => {
-    createUserWithEmailAndPassword(auth, "teste@email.com", "123456")
+    createUserWithEmailAndPassword(auth, "robert@email.com", "123456")
   .then((dadosDoUsuario) => {
     console.log(dadosDoUsuario)
   })

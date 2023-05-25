@@ -71,6 +71,7 @@ export default function Cadastro({ navigation }) {
         mensagem={mensagemError}
         error={statusError === 'firebase'}
         SetError={setStatusError}
+        tempoDuracao={1500}
       />
       <Botao onPress={() => realizarCadastro()}>CADASTRAR</Botao>
     </View>

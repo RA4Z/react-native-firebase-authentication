@@ -1,17 +1,35 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
+
 import Botao from '../../componentes/Botao';
 import { EntradaTexto } from '../../componentes/EntradaTexto';
+import { Alerta } from '../../componentes/Alerta'
+
 import { logar } from '../../services/requisicoesFirebase';
 import estilos from './estilos';
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
+  const [statusError, setStatusError] = useState('');
+  const [mensagemError, setMensagemError] = useState('');
 
   async function realizarLogin() {
-    const resultado = await logar(email, senha)
-    console.log(resultado)
+    if(email == '') {
+      setMensagemError('O E-mail é obrigatório!')
+      setStatusError('email')
+    } else if(senha == '') {
+      setMensagemError('A senha é obrigatória!')
+      setStatusError('senha')
+    } else {
+      const resultado = await logar(email, senha)
+      if(resultado == 'erro') {
+        setStatusError('firebase')
+        setMensagemError('E-mail ou senha não conferem!')
+      } else {
+        navigation.navigate('Principal')
+      }
+    }
   }
 
   return (
@@ -20,14 +38,25 @@ export default function Login({ navigation }) {
         label="E-mail"
         value={email}
         onChangeText={texto => setEmail(texto)}
+        error={statusError == 'email'}
+        messageError={mensagemError}
       />
       <EntradaTexto
         label="Senha"
         value={senha}
         onChangeText={texto => setSenha(texto)}
         secureTextEntry
+        error={statusError == 'senha'}
+        messageError={mensagemError}
       />
       
+      <Alerta 
+        mensagem={mensagemError}
+        error={statusError == 'firebase'}
+        SetError={setStatusError}
+        tempoDuracao={2000}
+      />
+
       <Botao onPress={() => realizarLogin()}>LOGAR</Botao>
       <Botao 
         onPress={() => { navigation.navigate('Cadastro') }}

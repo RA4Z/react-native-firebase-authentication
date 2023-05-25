@@ -1,7 +1,7 @@
 import { auth } from "../config/firebase";
 import { createUserWithEmailAndPassword, AuthErrorCodes } from "firebase/auth";
 
-function errosFirebase(erro) {
+function errosFirebase(error) {
     let mensagem = '';
     switch(error.code) {
         case AuthErrorCodes.EMAIL_EXISTS:

@@ -27,7 +27,7 @@ export default function Login({ navigation }) {
         setStatusError('firebase')
         setMensagemError('E-mail ou senha não conferem!')
       } else {
-        navigation.navigate('Principal')
+        navigation.replace('Principal')
       }
     }
   }

@@ -5,35 +5,37 @@ import { EntradaTexto } from '../../componentes/EntradaTexto';
 import estilos from './estilos';
 import { cadastrar } from '../../services/requisicoesFirebase';
 import { Alerta } from '../../componentes/Alerta';
+import { alteraDados } from '../../utils/common';
 
 export default function Cadastro({ navigation }) {  
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
-  const [confirmaSenha, setConfirmaSenha] = useState('');
+
+  const [dados, setDados] = useState({
+    email: '',
+    senha: '',
+    confirmaSenha: ''
+  });
+
   const [statusError, setStatusError] = useState('');
   const [mensagemError, setMensagemError] = useState('');
 
   async function realizarCadastro() {
-    if(email == '') {
+    if(dados.email == '') {
       setMensagemError('Preencha com seu E-mail')
       setStatusError('email')
-    } else if(senha == '') {
+    } else if(dados.senha == '') {
       setMensagemError('Digite sua senha')
       setStatusError('senha')
-    } else if(confirmaSenha == '') {
+    } else if(dados.confirmaSenha == '') {
       setMensagemError('Confirme sua senha')
       setStatusError('confirmaSenha')
-    } else if(confirmaSenha != senha) {
+    } else if(dados.confirmaSenha != dados.senha) {
       setMensagemError('As senhas não conferem!')
       setStatusError('confirmaSenha')
     } else {
-      const resultado = await cadastrar(email, senha);
+      const resultado = await cadastrar(dados.email, dados.senha);
       setStatusError('firebase')
       if(resultado == 'sucesso') {
         setMensagemError('Usuário criado com sucesso!')
-        setEmail('');
-        setSenha('');
-        setConfirmaSenha('');
       }
       else {
         setMensagemError(resultado)
@@ -45,15 +47,15 @@ export default function Cadastro({ navigation }) {
     <View style={estilos.container}>
       <EntradaTexto 
         label="E-mail"
-        value={email}
-        onChangeText={texto => setEmail(texto)}
+        value={dados.email}
+        onChangeText={valor => alteraDados('email',valor,dados,setDados)}
         error={statusError == 'email'}
         messageError={mensagemError}
       />
       <EntradaTexto
         label="Senha"
-        value={senha}
-        onChangeText={texto => setSenha(texto)}
+        value={dados.senha}
+        onChangeText={valor => alteraDados('senha',valor,dados,setDados)}
         secureTextEntry
         error={statusError == 'senha'}
         messageError={mensagemError}
@@ -61,8 +63,8 @@ export default function Cadastro({ navigation }) {
 
       <EntradaTexto
         label="Confirmar Senha"
-        value={confirmaSenha}
-        onChangeText={texto => setConfirmaSenha(texto)}
+        value={dados.confirmaSenha}
+        onChangeText={valor => alteraDados('confirmaSenha',valor,dados,setDados)}
         secureTextEntry
         error={statusError == 'confirmaSenha'}
         messageError={mensagemError}

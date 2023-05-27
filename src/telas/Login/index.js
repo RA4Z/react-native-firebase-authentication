@@ -8,7 +8,7 @@ import { Alerta } from '../../componentes/Alerta'
 import { logar } from '../../services/requisicoesFirebase';
 import estilos from './estilos';
 import { auth } from '../../config/firebase';
-import { alteraDados } from '../../utils/common';
+import { alteraDados, verificaSeTemEntradaVazia } from '../../utils/common';
 import { entradas } from './entradas';
 import animacaoCarregando from '../../../assets/carregando.gif'
 
@@ -43,18 +43,8 @@ export default function Login({ navigation }) {
     )
   }
 
-  function verificaSeTemEntradaVazia() {
-    for(const [variavel, valor] of Object.entries(dados)){
-      if(valor == '') {
-        setDados({...dados, [variavel]: null})
-        return true
-      }
-    }
-    return false
-  }
-
   async function realizarLogin() {
-    if(verificaSeTemEntradaVazia()) return
+    if(verificaSeTemEntradaVazia(dados, setDados)) return
 
     const resultado = await logar(dados.email, dados.senha)
     if(resultado == 'erro') {

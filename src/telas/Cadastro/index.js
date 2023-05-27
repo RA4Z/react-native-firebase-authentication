@@ -5,7 +5,8 @@ import { EntradaTexto } from '../../componentes/EntradaTexto';
 import estilos from './estilos';
 import { cadastrar } from '../../services/requisicoesFirebase';
 import { Alerta } from '../../componentes/Alerta';
-import { alteraDados } from '../../utils/common';
+import { alteraDados, verificaSeTemEntradaVazia } from '../../utils/common';
+import { entradas } from './entradas';
 
 export default function Cadastro({ navigation }) {  
 
@@ -18,60 +19,41 @@ export default function Cadastro({ navigation }) {
   const [statusError, setStatusError] = useState('');
   const [mensagemError, setMensagemError] = useState('');
 
+  function verificaSeSenhasSaoIguais() {
+    return dados.senha != dados.confirmaSenha
+  }
+
   async function realizarCadastro() {
-    if(dados.email == '') {
-      setMensagemError('Preencha com seu E-mail')
-      setStatusError('email')
-    } else if(dados.senha == '') {
-      setMensagemError('Digite sua senha')
-      setStatusError('senha')
-    } else if(dados.confirmaSenha == '') {
-      setMensagemError('Confirme sua senha')
-      setStatusError('confirmaSenha')
-    } else if(dados.confirmaSenha != dados.senha) {
-      setMensagemError('As senhas não conferem!')
-      setStatusError('confirmaSenha')
-    } else {
-      const resultado = await cadastrar(dados.email, dados.senha);
-      setStatusError('firebase')
-      if(resultado == 'sucesso') {
-        setMensagemError('Usuário criado com sucesso!')
-      }
-      else {
-        setMensagemError(resultado)
-      }
+    if(verificaSeTemEntradaVazia(dados, setDados)) return
+    if(dados.senha != dados.confirmaSenha) {
+      setStatusError(true)
+      setMensagemError('As senhas não conferem')
+      return
+    }
+    const resultado = await cadastrar(dados.email, dados.senha);
+    if(resultado != 'sucesso') {
+      setMensagemError(resultado)
     }
   }
 
   return (
     <View style={estilos.container}>
-      <EntradaTexto 
-        label="E-mail"
-        value={dados.email}
-        onChangeText={valor => alteraDados('email',valor,dados,setDados)}
-        error={statusError == 'email'}
-        messageError={mensagemError}
-      />
-      <EntradaTexto
-        label="Senha"
-        value={dados.senha}
-        onChangeText={valor => alteraDados('senha',valor,dados,setDados)}
-        secureTextEntry
-        error={statusError == 'senha'}
-        messageError={mensagemError}
-      />
-
-      <EntradaTexto
-        label="Confirmar Senha"
-        value={dados.confirmaSenha}
-        onChangeText={valor => alteraDados('confirmaSenha',valor,dados,setDados)}
-        secureTextEntry
-        error={statusError == 'confirmaSenha'}
-        messageError={mensagemError}
-      />
+      {
+        entradas.map((entrada) => {
+          return (
+            <EntradaTexto
+              key={entrada.id}
+              {...entrada}
+              value={dados[entrada.name]}
+              onChangeText={valor => alteraDados(entrada.name,valor, dados, setDados)}
+              error={entrada.name != 'confirmaSenha' ? false : verificaSeSenhasSaoIguais() && dados.confirmaSenha != ''}
+              />
+            )
+        })
+      }
       <Alerta 
         mensagem={mensagemError}
-        error={statusError === 'firebase'}
+        error={statusError}
         SetError={setStatusError}
         tempoDuracao={1500}
       />

@@ -32,6 +32,7 @@ export default function Cadastro({ navigation }) {
     }
     const resultado = await cadastrar(dados.email, dados.senha);
     if(resultado != 'sucesso') {
+      setStatusError(true)
       setMensagemError(resultado)
     }
   }

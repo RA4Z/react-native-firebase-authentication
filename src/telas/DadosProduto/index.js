@@ -3,12 +3,12 @@ import { EntradaTexto } from '../../componentes/EntradaTexto'
 import Botao from '../../componentes/Botao';
 import estilos from "./estilos";
 import React, { useState } from 'react';
-import { salvarProduto } from "../../services/firestore";
+import { salvarProduto, atualizarProduto } from "../../services/firestore";
 import { Alerta } from '../../componentes/Alerta'
 
-export default function DadosProduto({ navigation }) {
-    const [nome, setNome] = useState('');
-    const [preco, setPreco] = useState('');
+export default function DadosProduto({ navigation, route }) {
+    const [nome, setNome] = useState(route?.params?.nome || '');
+    const [preco, setPreco] = useState(route?.params?.preco || '');
     const [mensagem, setMensagem] = useState('');
     const [mostrarMensagem, setMostrarMensagem] = useState(false);
 
@@ -18,8 +18,15 @@ export default function DadosProduto({ navigation }) {
             setMostrarMensagem(true)
             return
         }
+        let resultado = ''
+        if(route?.params) {
+            resultado = await atualizarProduto(route?.params?.id, {
+                nome, preco
+            }) 
+        } else{
+            resultado = await salvarProduto({nome, preco})
+        }
 
-        const resultado = await salvarProduto({nome, preco})
         if(resultado == 'erro'){
             setMensagem('Erro ao salvar produto')
             setMostrarMensagem(true)

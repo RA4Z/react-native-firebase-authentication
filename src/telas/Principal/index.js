@@ -5,7 +5,7 @@ import Produto from '../../componentes/Produtos';
 import estilos from './estilos';
 import { auth } from '../../config/firebase';
 import { BotaoProduto } from '../../componentes/BotaoProduto';
-import { pegarProdutos } from '../../services/firestore';
+import { pegarProdutos, pegarProdutosTempoReal } from '../../services/firestore';
 
 export default function Principal({ navigation }) {
   const usuario = auth.currentUser;
@@ -21,6 +21,7 @@ export default function Principal({ navigation }) {
 
   useEffect(() =>{
     carregarDadosProdutos()
+    pegarProdutosTempoReal(setProdutos)
   }, [])
 
   function deslogar(){

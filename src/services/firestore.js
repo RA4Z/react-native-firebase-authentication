@@ -59,3 +59,20 @@ export async function deletarProduto(produtoID) {
         return 'error'
     }
 }
+
+export async function pesquisarProduto(nomeProduto){
+    try {
+        const produtoRef = collection(db, 'produtos');
+        let produtos = []
+        const q = query(produtoRef, where("nome", "==", nomeProduto));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+            let produto = {id: doc.id, ...doc.data()}
+            produtos.push(produto)
+        });
+        return produtos
+    } catch(error) {
+        console.log(error)
+        //return 'error'
+    }
+}
